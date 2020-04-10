@@ -5,4 +5,6 @@ import com.joseluisestevez.ms.commons.services.CommonService;
 
 public interface CourseService extends CommonService<Course> {
 
+    Course findCourseByStudentId(Long id);
+
 }
