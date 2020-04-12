@@ -10,12 +10,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.joseluisestevez.ms.commons.exams.models.entity.Exam;
 import com.joseluisestevez.ms.commons.students.models.entity.Student;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +42,9 @@ public class Course {
     @OneToMany(fetch = FetchType.LAZY)
     private List<Student> students = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Exam> exams = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
         // You can use the @CreationTimestamp and @UpdateTimestamp attribute annotation
@@ -54,4 +59,11 @@ public class Course {
         this.students.remove(student);
     }
 
+    public void addExam(Exam exam) {
+        this.exams.add(exam);
+    }
+
+    public void removeExam(Exam exam) {
+        this.exams.remove(exam);
+    }
 }
