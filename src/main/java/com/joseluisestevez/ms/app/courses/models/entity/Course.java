@@ -16,6 +16,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
 
 import com.joseluisestevez.ms.commons.exams.models.entity.Exam;
 import com.joseluisestevez.ms.commons.students.models.entity.Student;
@@ -33,6 +34,7 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty
     private String name;
 
     @Temporal(TemporalType.TIMESTAMP)
