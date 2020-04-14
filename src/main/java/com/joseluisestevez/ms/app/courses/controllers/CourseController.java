@@ -1,11 +1,14 @@
 package com.joseluisestevez.ms.app.courses.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,6 +26,9 @@ import com.joseluisestevez.ms.commons.students.models.entity.Student;
 
 @RestController
 public class CourseController extends CommonController<Course, CourseService> {
+
+    @Value("${config.loadbalancer.test}")
+    private String balancerTest;
 
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@PathVariable Long id, @Valid @RequestBody Course course, BindingResult result) {
@@ -113,6 +119,14 @@ public class CourseController extends CommonController<Course, CourseService> {
 
         Course courseSaved = service.save(currentCourse);
         return ResponseEntity.status(HttpStatus.CREATED).body(courseSaved);
+    }
+
+    @GetMapping("balancer-test")
+    public ResponseEntity<?> balancerTest() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("balancerTest", balancerTest);
+        response.put("courses", service.findAll());
+        return ResponseEntity.ok(response);
     }
 
 }
