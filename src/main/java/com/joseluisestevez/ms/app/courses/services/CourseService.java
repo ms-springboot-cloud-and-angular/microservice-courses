@@ -7,4 +7,5 @@ public interface CourseService extends CommonService<Course> {
 
     Course findCourseByStudentId(Long id);
 
+    Iterable<Long> getExamsAnswered(Long studentId);
 }
