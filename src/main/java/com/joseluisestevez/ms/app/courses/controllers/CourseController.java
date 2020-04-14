@@ -2,6 +2,7 @@ package com.joseluisestevez.ms.app.courses.controllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -69,7 +70,22 @@ public class CourseController extends CommonController<Course, CourseService> {
 
     @GetMapping("/student/{id}")
     public ResponseEntity<?> findByStudent(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findCourseByStudentId(id));
+        Course course = service.findCourseByStudentId(id);
+        if (course == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Long> examIds = (List<Long>) service.getExamsAnswered(id);
+        List<Exam> exams = course.getExams().stream().map(e -> {
+            if (examIds.contains(e.getId())) {
+                e.setAnswered(true);
+            }
+            return e;
+        }).collect(Collectors.toList());
+
+        course.setExams(exams);
+
+        return ResponseEntity.ok(course);
     }
 
     @PutMapping("/{id}/assign-exams")
