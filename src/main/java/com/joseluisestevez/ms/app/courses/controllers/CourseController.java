@@ -31,6 +31,20 @@ public class CourseController extends CommonController<Course, CourseService> {
     @Value("${config.loadbalancer.test}")
     private String balancerTest;
 
+    @GetMapping
+    @Override
+    public ResponseEntity<?> list() {
+        List<Course> courses = ((List<Course>) service.findAll()).stream().map(c -> {
+            c.getCourseStudents().forEach(cs -> {
+                Student s = new Student();
+                s.setId(cs.getId());
+                c.addStudent(s);
+            });
+            return c;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok().body(courses);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@PathVariable Long id, @Valid @RequestBody Course course, BindingResult result) {
         if (result.hasErrors()) {
