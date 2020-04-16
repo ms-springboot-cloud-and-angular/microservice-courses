@@ -2,7 +2,7 @@ package com.joseluisestevez.ms.app.courses.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.joseluisestevez.ms.commons.students.models.entity.Student;
 
@@ -10,6 +10,6 @@ import com.joseluisestevez.ms.commons.students.models.entity.Student;
 public interface StudentFeignClient {
 
     @GetMapping("/students-per-course")
-    Iterable<Student> getStudentsPerCourse(@RequestBody Iterable<Long> ids);
+    Iterable<Student> getStudentsPerCourse(@RequestParam Iterable<Long> ids);
 
 }

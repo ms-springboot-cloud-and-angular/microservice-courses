@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -43,6 +45,38 @@ public class CourseController extends CommonController<Course, CourseService> {
             return c;
         }).collect(Collectors.toList());
         return ResponseEntity.ok().body(courses);
+    }
+
+    @GetMapping("/pageable")
+    @Override
+    public ResponseEntity<?> list(Pageable pageable) {
+        Page<Course> page = service.findAll(pageable).map(c -> {
+            c.getCourseStudents().forEach(cs -> {
+                Student s = new Student();
+                s.setId(cs.getId());
+                c.addStudent(s);
+            });
+            return c;
+        });
+
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/{id}")
+    @Override
+    public ResponseEntity<?> view(@PathVariable Long id) {
+        Optional<Course> optional = service.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Course course = optional.get();
+        if (!course.getCourseStudents().isEmpty()) {
+            List<Long> ids = course.getCourseStudents().stream().map(cs -> cs.getStudentId()).collect(Collectors.toList());
+            List<Student> students = (List<Student>) service.getStudentsPerCourse(ids);
+            course.setStudents(students);
+        }
+
+        return ResponseEntity.ok(course);
     }
 
     @PutMapping("/{id}")
