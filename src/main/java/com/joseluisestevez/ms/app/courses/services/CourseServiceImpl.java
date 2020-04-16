@@ -35,4 +35,10 @@ public class CourseServiceImpl extends CommonServiceImpl<Course, CourseRepositor
         return studentFeignClient.getStudentsPerCourse(ids);
     }
 
+    @Transactional
+    @Override
+    public void deleteCourseStudentByStudentId(Long studentId) {
+        repository.deleteCourseStudentByStudentId(studentId);
+    }
+
 }
