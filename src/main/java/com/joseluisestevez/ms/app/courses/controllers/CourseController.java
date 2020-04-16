@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.joseluisestevez.ms.app.courses.models.entity.Course;
+import com.joseluisestevez.ms.app.courses.models.entity.CourseStudent;
 import com.joseluisestevez.ms.app.courses.services.CourseService;
 import com.joseluisestevez.ms.commons.controllers.CommonController;
 import com.joseluisestevez.ms.commons.exams.models.entity.Exam;
@@ -55,7 +56,12 @@ public class CourseController extends CommonController<Course, CourseService> {
         }
         Course currentCourse = optional.get();
 
-        students.forEach(currentCourse::addStudent);
+        students.forEach(s -> {
+            CourseStudent courseStudent = new CourseStudent();
+            courseStudent.setStudentId(s.getId());
+            courseStudent.setCourse(currentCourse);
+            currentCourse.addSCourseStudent(courseStudent);
+        });
 
         Course courseSaved = service.save(currentCourse);
         return ResponseEntity.status(HttpStatus.CREATED).body(courseSaved);
@@ -68,7 +74,10 @@ public class CourseController extends CommonController<Course, CourseService> {
             return ResponseEntity.notFound().build();
         }
         Course currentCourse = optional.get();
-        currentCourse.removeStudent(student);
+
+        CourseStudent courseStudent = new CourseStudent();
+        courseStudent.setStudentId(student.getId());
+        currentCourse.removeCourseStudent(courseStudent);
 
         Course courseSaved = service.save(currentCourse);
         return ResponseEntity.status(HttpStatus.CREATED).body(courseSaved);
